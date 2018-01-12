@@ -6,23 +6,28 @@ var urlencodedParser = bodyParser.urlencoded({extended: false});
 
 var app = express();
 
-
-/* On utilise les sessions */
-app.use(session({secret: 'todotopsecret'}))
+/*
+ * On utilise les sessions et le décodage des body urlEncoded
+ */
+app
+    .use(session({secret: 'todotopsecret'}))
     .use(urlencodedParser);
+
+var todoListe = [];
 
 /*
  * liste des tâches
  */
 app.get('/todo', function (req, res) {
-    res.render('./todolist.ejs');
+    res.render('./todolist.ejs', {todo_liste: todoListe});
 });
 
 /*
  * ajouter une tâche
  */
-app.post('/todo/ajouter/', function(req, res) {
-
+app.post('/todo/ajouter', function(req, res) {
+    todoListe.push(req.body.trucAFaire);
+    res.render('./todolist.ejs', {todo_liste: todoListe});
 });
 
 /*
