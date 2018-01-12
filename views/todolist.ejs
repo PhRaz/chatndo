@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-<h1>TODO liste simple</h1>
-<p>Néanmoins efficace.</p>
+<h1>TODO liste</h1>
 
-<ul>
+<ul id="todo_liste">
     <% for(var index = 0; index < todo_liste.length; index++) { %>
-    <li><%= todo_liste[index] %></li>
+    <li>
+        <span class="action_suppression" id="<%= index%>">X </span><%= todo_liste[index] %>
+    </li>
     <% } %>
 </ul>
 
@@ -19,5 +20,12 @@
     <input type="submit" value="Valider"/>
 </form>
 
+<script>
+    $(document).ready(function () {
+        $(".action_suppression").click(function () {
+            window.location.href = "/todo/supprimer/" + this.id;
+        });
+    });
+</script>
 </body>
 </html>
