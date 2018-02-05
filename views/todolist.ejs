@@ -12,18 +12,62 @@
 <h1>TODO liste</h1>
 
 <ul id="todo_liste">
-    <% todo_liste.forEach(function(todo, index) { %>
+    <% todo_liste.forEach(function(todo) { %>
     <li>
-        <a href="todo/supprimer/<%= index %>">&#x2718; </a><%= todo %>
+        <a href="todo/supprimer/<%= todo.todoId %>">&#x2718; </a><%= todo.todoItem %>
     </li>
     <% }); %>
 </ul>
 
-<form action="/todo/ajouter" method="post">
+<form action="">
     <label for="truc_a_faire">Que dois-je faire ?</label>
     <input type="text" name="trucAFaire" id="truc_a_faire" autofocus/>
-    <input type="submit" value="Valider"/>
+    <input type="submit" value="Ajouter"/>
 </form>
 
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    $(function () {
+
+        var pseudo = '';
+
+        /*
+         * connection
+         */
+        var socket = io.connect('http://localhost:8080');
+
+        /*
+         * demande d'un pseudo
+         */
+        socket.on('serveur_demande_pseudo', function () {
+            pseudo = prompt('Entrez votre pseudo : ');
+            socket.emit('client_envoie_pseudo', pseudo);
+        });
+
+        /*
+         * réception de la todo liste
+         */
+        socket.on('serveur_emet_todo_list', function (todoList) {
+            $('#todo_liste').html('');
+            todoList.forEach(function (todoItem) {
+                var line = '<li><a href="todo/supprimer/' + todoItem.todoId + '">&#x2718; </a>' + todoItem.todoItem + '</li>';
+                $('#todo_liste').append(line);
+            });
+        });
+
+        /*
+         * entrée d'un nouveau todo
+         */
+        $('form').submit(function () {
+            m = $('#truc_a_faire');
+            if (m.val().length > 0) {
+                socket.emit('client_ajoute_todo', {pseudo: pseudo, message: m.val()});
+                m.val('');
+            }
+            return false;
+        });
+    });
+</script>
 </body>
 </html>

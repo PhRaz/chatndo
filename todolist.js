@@ -1,62 +1,72 @@
 /*
  *  gestion de todo list
+ *
+ * utilisation d'un id pour les items de la liste
  */
-var express = require('express');
-var cookieSession = require('cookie-session'); // Charge le middleware de sessions
-var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 
-var app = express();
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io').listen(server);
+var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
+var path = require('path');
+var ent = require('ent');
+
+
+var todoListe = [];
+var todoId = 0;
 
 /*
- * On utilise les cookies sessions et le décodage des body urlEncoded
+ * décodage des bodies urlEncoded
  */
-app.use(cookieSession({
-    name: 'session',
-    secret: 'todotopsecret',
-    maxAge: 24 * 60 * 60 * 1000
-}));
-
 app.use(bodyParser.urlencoded({extended: false}));
 
 /*
- * création de la liste dans la session si elle n'existe pas
+ * le get (chargement de la page) renvoie la page avec la liste courante
+ */
+app.get('/todo', function (req, res, next) {
+    res.render('./todolist.ejs', {todo_liste: todoListe});
+});
+
+/*
+ * connexion d'un nouveau client
+ */
+io.on('connection', function (socket) {
+    console.log("connextion d'un utilisateur");
+
+    socket.emit('serveur_demande_pseudo');
+
+    socket.on('client_deconnexion', function () {
+        console.log('un utilisateur est déconnecté');
+    });
+
+    socket.on('client_renvoie_pseudo', function (msg) {
+        console.log("connexion de " + ent.encode(msg));
+        socket.emit('serveur_emet_todo_list', todoListe);
+    });
+
+    socket.on('client_ajoute_todo', function (msg) {
+        console.log('ajout todo ' + msg);
+        todoListe.push({ todoId: todoId, pseudo: msg.pseudo, todoItem: ent.encode(msg.message)});
+        todoId++;
+        socket.broadcast.emit('serveur_emet_todo_list', todoListe);
+        socket.emit('serveur_emet_todo_list', todoListe);
+    });
+
+    socket.on('client_supprime_todo', function(msg) {
+
+    });
+});
+
+/*
+ * redirection si url non trouvée
  */
 app.use(function (req, res, next) {
-    if (typeof req.session.todoListe === 'undefined') {
-        req.session.todoListe = [];
-    }
-    next();
-});
-
-/*
- * lister les tâches
- */
-app.get('/todo', function (req, res) {
-    res.render('./todolist.ejs', {todo_liste: req.session.todoListe});
-});
-
-/*
- * ajouter une tâche
- */
-app.post('/todo/ajouter', function (req, res) {
-    if (req.body.trucAFaire !== '') {
-        req.session.todoListe.push(req.body.trucAFaire);
-    }
     res.redirect('/todo');
 });
 
 /*
- * supprimer une tâche
+ * démarrage du serveur
  */
-app.get('/todo/supprimer/:id', function (req, res) {
-    if (req.params.id !== '') {
-        req.session.todoListe.splice(req.params.id, 1);
-    }
-    res.redirect('/todo');
+server.listen(8080, function () {
+    console.log('listening on *:8080');
 });
-
-app.use(function (req, res) {
-    res.redirect('/todo');
-});
-
-app.listen(8080);
