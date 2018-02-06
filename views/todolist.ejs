@@ -23,7 +23,7 @@
 <ul id="todo_liste">
     <% todo_liste.forEach(function(todo) { %>
     <li>
-        <span class="supprime_todo" id="<%= todo.todoId %>">&#x2718; </span><span class="todo_item"><%= todo.todoItem %></span>
+        <span class="supprime_todo" id="<%= todo.todoId %>">&#x2718; </span><span class="todo_item"><%- todo.todoItem %></span>
     </li>
     <% }); %>
 </ul>
