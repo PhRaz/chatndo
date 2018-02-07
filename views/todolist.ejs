@@ -5,12 +5,15 @@
         .supprime_todo {
             color: red;
         }
+
         .supprime_todo:hover {
             cursor: default;
         }
+
         .supprime_todo:hover + .todo_item {
             text-decoration: line-through;
         }
+
         body {
             width: 940px;
             margin: 0 auto;
@@ -23,7 +26,8 @@
 <ul id="todo_liste">
     <% todo_liste.forEach(function(todo) { %>
     <li>
-        <span class="supprime_todo" id="<%= todo.todoId %>">&#x2718; </span><span class="todo_item"><%- todo.todoItem %></span>
+        <span class="supprime_todo" id="<%= todo.todoId %>">&#x2718; </span><span
+            class="todo_item"><%- todo.todoItem %></span>
     </li>
     <% }); %>
 </ul>
@@ -45,16 +49,14 @@
         var socket = io.connect('http://localhost:8080');
 
         /*
-         * mise en place des events de suppresion des élémenents de la todo list
-        */
-        function update_events_de_suppression() {
-            $('.supprime_todo').click(function(e) {
-                socket.emit('client_supprime_todo', e.target.id);
-            });
-        }
+         * suppression d'un item
+         */
+        $('body').on('click', '.supprime_todo', function () {
+            socket.emit('client_supprime_todo', $(this).attr('id'));
+        });
 
         /*
-         * Réception de la todo liste.
+         * réception de la todo liste
          *
          * Remplace la todo liste par la nouvelle liste reçue.
          * Met à jour les triggers de suppression des items de la liste.
@@ -65,7 +67,6 @@
                 var item = '<li><span class="supprime_todo" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
                 $('#todo_liste').append(item);
             });
-            update_events_de_suppression();
         });
 
         /*
@@ -79,8 +80,6 @@
             }
             return false;
         });
-
-        update_events_de_suppression();
     });
 </script>
 </body>
