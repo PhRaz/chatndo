@@ -24,12 +24,6 @@
 <h1>TODO liste</h1>
 
 <ul id="todo_liste">
-    <% todo_liste.forEach(function(todo) { %>
-    <li>
-        <span class="supprime_todo" id="<%= todo.todoId %>">&#x2718; </span><span
-            class="todo_item"><%- todo.todoItem %></span>
-    </li>
-    <% }); %>
 </ul>
 
 <form action="">
@@ -41,45 +35,42 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
-    $(function () {
+    /*
+     * connection
+     */
+    var socket = io.connect('http://localhost:8080');
 
-        /*
-         * connection
-         */
-        var socket = io.connect('http://localhost:8080');
+    /*
+     * suppression d'un item
+     */
+    $('body').on('click', '.supprime_todo', function () {
+        socket.emit('client_supprime_todo', $(this).attr('id'));
+    });
 
-        /*
-         * suppression d'un item
-         */
-        $('body').on('click', '.supprime_todo', function () {
-            socket.emit('client_supprime_todo', $(this).attr('id'));
+    /*
+     * réception de la todo liste
+     *
+     * Remplace la todo liste par la nouvelle liste reçue.
+     * Met à jour les triggers de suppression des items de la liste.
+     */
+    socket.on('serveur_emet_todo_list', function (todoList) {
+        $('#todo_liste').html('');
+        todoList.forEach(function (todoItem) {
+            var item = '<li><span class="supprime_todo" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
+            $('#todo_liste').append(item);
         });
+    });
 
-        /*
-         * réception de la todo liste
-         *
-         * Remplace la todo liste par la nouvelle liste reçue.
-         * Met à jour les triggers de suppression des items de la liste.
-         */
-        socket.on('serveur_emet_todo_list', function (todoList) {
-            $('#todo_liste').html('');
-            todoList.forEach(function (todoItem) {
-                var item = '<li><span class="supprime_todo" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
-                $('#todo_liste').append(item);
-            });
-        });
-
-        /*
-         * création d'un nouveau todo
-         */
-        $('form').submit(function () {
-            m = $('#truc_a_faire');
-            if (m.val().length > 0) {
-                socket.emit('client_ajoute_todo', m.val());
-                m.val('');
-            }
-            return false;
-        });
+    /*
+     * création d'un nouveau todo
+     */
+    $('form').submit(function () {
+        m = $('#truc_a_faire');
+        if (m.val().length > 0) {
+            socket.emit('client_ajoute_todo', m.val());
+            m.val('');
+        }
+        return false;
     });
 </script>
 </body>

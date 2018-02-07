@@ -15,10 +15,10 @@ var todoListe = [];
 var todoId = 0;
 
 /*
- * le get renvoie la page avec la liste courante
+ * le get renvoie la page de l'application
  */
 app.get('/todo', function (req, res, next) {
-    res.render('./todolist.ejs', {todo_liste: todoListe});
+    res.render('./todolist.ejs');
 });
 
 /*
@@ -26,6 +26,8 @@ app.get('/todo', function (req, res, next) {
  */
 io.on('connection', function (socket) {
     console.log("connexion d'un utilisateur");
+
+    socket.emit('serveur_emet_todo_list', todoListe);
 
     socket.on('client_ajoute_todo', function (msg) {
         console.log('ajout todo ' + todoId + ' : ' + msg);
