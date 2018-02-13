@@ -1,7 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
     <style>
+        .pseudo {
+            background-color: black;
+            color: white;
+            font-weight: bold;
+            padding: 2px 5px 2px 5px;
+        }
+
         .supprime_todo {
             color: red;
         }
@@ -13,32 +32,93 @@
         .supprime_todo:hover + .todo_item {
             text-decoration: line-through;
         }
-
-        body {
-            width: 940px;
-            margin: 0 auto;
-        }
     </style>
 </head>
+
 <body>
-<h1>TODO liste</h1>
+<div class="container">
 
-<ul id="todo_liste">
-</ul>
+    <header class="page-header">
+        <h1>Chat'n do</h1>
+    </header>
 
-<form action="">
-    <label for="truc_a_faire">Que dois-je faire ?</label>
-    <input type="text" size="70" name="trucAFaire" id="truc_a_faire" autofocus/>
-    <input type="submit" value="Ajouter"/>
-</form>
+    <div class="row">
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <div class="col-lg-6 col-sm-12">
+
+            <h2>Chat</h2>
+
+            <form id="chat" action="" class="form-inline">
+                <div class="form-group">
+                    <input type="text" size="40" name="message" id="message" class="form-control"
+                           placeholder="Votre message ..." autofocus/>
+                    <input type="submit" value="Envoyer" class="btn btn-default"/>
+                </div>
+            </form>
+            <div id="conversation">
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-sm-12">
+
+            <h2>Do</h2>
+
+            <form id="todo" action="" class="form-inline">
+                <div class="form-group">
+                    <input type="text" size="40" name="trucAFaire" id="truc_a_faire" class="form-control"/>
+                    <input type="submit" value="Ajouter" class="btn btn-default"/>
+                </div>
+            </form>
+            <ul id="todo_liste" class="list-unstyled">
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
 <script>
     /*
      * connection
      */
     var socket = io.connect('http://localhost:8080');
+
+    /*
+     * gestion du chat
+     */
+
+    var pseudo = '';
+
+    /*
+     * demande d'un pseudo
+     */
+    socket.on('demande_pseudo', function () {
+        pseudo = prompt('Entrez votre pseudo : ');
+        socket.emit('pseudo', pseudo);
+    });
+
+    /*
+     * réception d'un message
+     */
+    socket.on('message', function (msg) {
+        $('#conversation').prepend('<p>' + msg + '</p>');
+    });
+
+    /*
+     * entrée d'un message
+     */
+    $('#chat').submit(function () {
+        m = $('#message');
+        if (m.val().length > 0) {
+            socket.emit('message', {pseudo: pseudo, message: m.val()});
+            m.val('');
+        }
+        return false;
+    });
+
+    /*
+     * gestion de la todo list
+     */
 
     /*
      * suppression d'un item
@@ -64,7 +144,7 @@
     /*
      * création d'un nouveau todo
      */
-    $('form').submit(function () {
+    $('#todo').submit(function () {
         m = $('#truc_a_faire');
         if (m.val().length > 0) {
             socket.emit('client_ajoute_todo', m.val());
@@ -72,6 +152,7 @@
         }
         return false;
     });
+
 </script>
 </body>
 </html>

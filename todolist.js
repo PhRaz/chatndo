@@ -27,7 +27,30 @@ app.get('/todo', function (req, res, next) {
 io.on('connection', function (socket) {
     console.log("connexion d'un utilisateur");
 
-    socket.emit('serveur_emet_todo_list', todoListe);
+    socket.emit('demande_pseudo');
+
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+
+    socket.on('pseudo', function (msg) {
+        message = ent.encode(msg)  + ' a rejoint la conversation';
+        console.log(message);
+        socket.broadcast.emit('message', message);
+        socket.emit('message', message);
+
+        socket.emit('serveur_emet_todo_list', todoListe);
+    });
+
+    socket.on('message', function (msg) {
+        /*
+         * encodage des entitées HTML pour ne pas injecter de HTML dans la page
+         */
+        message = '<span class="pseudo">' + ent.encode(msg.pseudo) + '</span> ' + ent.encode(msg.message);
+        console.log(message);
+        socket.broadcast.emit('message', message);
+        socket.emit('message', message);
+    });
 
     socket.on('client_ajoute_todo', function (msg) {
         console.log('ajout todo ' + todoId + ' : ' + msg);
