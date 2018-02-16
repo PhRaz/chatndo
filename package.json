@@ -2,11 +2,18 @@
   "name": "todolist",
   "version": "0.1.0",
   "dependencies": {
-    "express": "~4.11.0",
-    "socket.io": "~2.0.4",
+    "body-parser": "^1.18.2",
     "ejs": "~2.5.7",
-    "ent": "~2.2.0"
+    "ent": "~2.2.0",
+    "express": "~4.11.0",
+    "express-session": "^1.15.6",
+    "express-socket.io-session": "^1.3.2",
+    "socket.io": "~2.0.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PhRaz/todolist.git"
   },
   "author": "PhRaz",
-  "description": "Un gestionnaire de todo list"
+  "description": "Chat'n Do : une application sur une page avec un chat et une todo list"
 }
