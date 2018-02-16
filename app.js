@@ -5,9 +5,9 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
-var session = require('express-session');
 var ent = require('ent');
 var bodyParser = require('body-parser');
+var sharedsession = require("express-socket.io-session");
 
 /*
  * Gestion de la liste dans une variable globale du serveur.
@@ -19,13 +19,21 @@ var todoId = 0;
 /*
  * configuration
  */
-app.use(session({
+
+var session = require('express-session')({
     secret: 'top secret',
-    resave: false,
+    resave: true,
     saveUninitialized: true
+});
+
+app.use(session);
+
+io.use(sharedsession(session, {
+    autoSave: true
 }));
 
 app.use(bodyParser.json());
+
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(function (req, res, next) {
@@ -53,7 +61,8 @@ app.get('/login', function (req, res, next) {
 /*
  * login page form submit
  */
-app.post('/login', function(req, res, next) {
+app.post('/login', function (req, res, next) {
+    console.log("post login");
     if (req.body) {
         if (req.body.pseudo) {
             /*
@@ -61,9 +70,13 @@ app.post('/login', function(req, res, next) {
              */
             req.session.pseudo = req.body.pseudo;
             res.redirect('/todo');
+        } else {
+            /*
+             * incorrect login information
+             */
+            res.render('./login.ejs');
         }
     }
-    res.render('./login.ejs');
 });
 
 /*
@@ -80,6 +93,20 @@ app.get('/logout', function (req, res, next) {
 });
 
 /*
+ * renvoie la page de l'application
+ */
+app.get('/todo', function (req, res, next) {
+    console.log("todo");
+    if (req.session.pseudo !== '') {
+        console.log("page todo");
+        res.render('./todolist.ejs', {pseudo: req.session.pseudo});
+    } else {
+        res.redirect('/login');
+    }
+});
+
+
+/*
  * redirection si url non trouvée
  */
 app.use(function (req, res, next) {
@@ -87,41 +114,37 @@ app.use(function (req, res, next) {
 });
 
 /*
- * renvoie la page de l'application
- */
-app.get('/todo', function (req, res, next) {
-    if (req.session.pseudo !== '') {
-        res.render('./todolist.ejs', {pseudo: req.session.pseudo});
-    } else {
-        res.redirect('/login');
-    }
-});
-
-/*
  * connexion d'un nouveau client
  */
 io.on('connection', function (socket) {
 
-    /*
-    message = pseudo + ' a rejoint la conversation';
-    console.log(message);
+    console.log("connection socket.io");
 
-    socket.broadcast.emit('message', message);
-    socket.emit('message', message);
+    socket.on('hello', function (userdate) {
+
+        console.log('hello');
+        pseudo = socket.handshake.session.pseudo;
+
+        message = pseudo + ' a rejoint la conversation';
+        console.log(message);
+
+        socket.broadcast.emit('message', message);
+        socket.emit('message', message);
+        socket.emit('serveur_emet_todo_list', todoListe);
+    });
 
     socket.on('disconnect', function () {
-        console.log('[recharge la page ?] déconnexion');
+        console.log('déconnexion de ' + socket.handshake.session.pseudo);
     });
-    */
 
-    socket.emit('serveur_emet_todo_list', todoListe);
 
     socket.on('message', function (msg) {
         /*
          * encodage des entitées HTML pour ne pas injecter de HTML dans la page
          */
-        message = '<span class="pseudo">' + ent.encode(msg.pseudo) + '</span> ' + ent.encode(msg.message);
-        console.log(message + " " + socket.request.pseudo);
+        pseudo = socket.handshake.session.pseudo;
+        message = '<span class="pseudo">' + ent.encode(pseudo) + '</span> ' + ent.encode(msg.message);
+        console.log(pseudo + " : " + message);
         socket.broadcast.emit('message', message);
         socket.emit('message', message);
     });

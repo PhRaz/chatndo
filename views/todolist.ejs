@@ -40,13 +40,14 @@
 
     <header class="page-header">
         <div class="row">
-            <div class="col-lg-2">
+            <div class="col-lg-6">
                 <h1>Chat'n do</h1>
             </div>
-            <div class="col-lg-8"></div>
-            <div class="col-lg-2">
+            <div class="col-lg-5">
                 <h2>Hello <%= pseudo %> !</h2>
-                <p><a href="/logout">logout</a></p>
+            </div>
+            <div class="col-lg-1">
+                <h5><a href="/logout">logout</a></h5>
             </div>
         </div>
     </header>
@@ -91,20 +92,11 @@
      * connection
      */
     var socket = io.connect('http://localhost:8080');
+    socket.emit('hello');
 
     /*
      * gestion du chat
      */
-
-    var pseudo = '';
-
-    /*
-     * demande d'un pseudo
-     */
-    socket.on('demande_pseudo', function () {
-        pseudo = prompt('Entrez votre pseudo : ');
-        socket.emit('pseudo', pseudo);
-    });
 
     /*
      * réception d'un message
@@ -119,7 +111,7 @@
     $('#chat').submit(function () {
         m = $('#message');
         if (m.val().length > 0) {
-            socket.emit('message', {pseudo: pseudo, message: m.val()});
+            socket.emit('message', {message: m.val()});
             m.val('');
         }
         return false;
