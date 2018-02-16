@@ -15,6 +15,7 @@ var sharedsession = require("express-socket.io-session");
  */
 var todoListe = [];
 var todoId = 0;
+var conversation = [];
 
 /*
  * configuration
@@ -127,9 +128,9 @@ io.on('connection', function (socket) {
 
         message = pseudo + ' a rejoint la conversation';
         console.log(message);
+        conversation.push(message);
 
-        socket.broadcast.emit('message', message);
-        socket.emit('message', message);
+        socket.emit('serveur_emet_conversation', conversation);
         socket.emit('serveur_emet_todo_list', todoListe);
     });
 
@@ -147,6 +148,7 @@ io.on('connection', function (socket) {
         console.log(pseudo + " : " + message);
         socket.broadcast.emit('message', message);
         socket.emit('message', message);
+        conversation.push(message);
     });
 
     socket.on('client_ajoute_todo', function (msg) {

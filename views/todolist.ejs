@@ -138,8 +138,18 @@
         $('#todo_liste').html('');
         todoList.forEach(function (todoItem) {
             var item = '<li><span class="supprime_todo" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
-            $('#todo_liste').append(item);
+            $('#todo_liste').prepend(item);
         });
+    });
+
+    /*
+     * receive conversation
+     */
+    socket.on('serveur_emet_conversation', function(conversation) {
+        $('#conversation').html('');
+        conversation.forEach(function(conversationItem) {
+            $('#conversation').prepend('<p>' + conversationItem + '</p>');
+        })
     });
 
     /*
