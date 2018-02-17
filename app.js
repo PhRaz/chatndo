@@ -8,6 +8,8 @@ var io = require('socket.io').listen(server);
 var ent = require('ent');
 var bodyParser = require('body-parser');
 var sharedsession = require("express-socket.io-session");
+var address = require("ip").address();
+var port = 80;
 
 /*
  * Gestion de la liste dans une variable globale du serveur.
@@ -100,7 +102,7 @@ app.get('/todo', function (req, res, next) {
     console.log("todo");
     if (req.session.pseudo !== '') {
         console.log("page todo");
-        res.render('./todolist.ejs', {pseudo: req.session.pseudo});
+        res.render('./todolist.ejs', {pseudo: req.session.pseudo, address: address, port: port});
     } else {
         res.redirect('/login');
     }
@@ -172,6 +174,6 @@ io.on('connection', function (socket) {
 /*
  * démarrage du serveur
  */
-server.listen(8080, function () {
-    console.log('le serveur écoute sur *:8080');
+server.listen(port, address, function () {
+    console.log('le serveur écoute sur *:' + port);
 });
