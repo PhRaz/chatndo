@@ -160,7 +160,6 @@ io.on('connection', function (socket) {
         console.log('déconnexion de ' + socket.handshake.session.pseudo);
     });
 
-
     socket.on('message', function (msg) {
         /*
          * encodage des entitées HTML pour ne pas injecter de HTML dans la page

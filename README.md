@@ -14,5 +14,5 @@ yum install git -y
 git clone https://github.com/PhRaz/todolist.git
 cd todolist
 npm install
-node app.js
+nohup node app.js
 </pre>
