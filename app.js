@@ -72,6 +72,11 @@ app.post('/login', function (req, res, next) {
              * submit login
              */
             req.session.pseudo = req.body.pseudo;
+
+            message = req.body.pseudo + ' a rejoint la conversation';
+            conversation.push(message);
+            console.log(message);
+
             res.redirect('/todo');
         } else {
             /*
@@ -127,10 +132,6 @@ io.on('connection', function (socket) {
 
         console.log('hello');
         pseudo = socket.handshake.session.pseudo;
-
-        message = pseudo + ' a rejoint la conversation';
-        console.log(message);
-        conversation.push(message);
 
         socket.emit('serveur_emet_conversation', conversation);
         socket.emit('serveur_emet_todo_list', todoListe);
