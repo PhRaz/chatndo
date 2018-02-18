@@ -8,7 +8,25 @@ var io = require('socket.io').listen(server);
 var ent = require('ent');
 var bodyParser = require('body-parser');
 var sharedsession = require("express-socket.io-session");
-var address = require("ip").address();
+var ec2 = require("ec2-publicip");
+var address = '';
+
+/*
+ * initialize public IP address for AWS EC2 instance
+ */
+ec2.getPublicIP(function (error, ip) {
+    if (error) {
+        console.log(error);
+    }
+    console.log("Instance Public IP: ", ip);
+    address = ip;
+});
+
+/*
+ * initialize public IP address
+ */
+// address = require("ip").address();
+
 var port = 80;
 
 /*
