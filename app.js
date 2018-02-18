@@ -152,6 +152,7 @@ io.on('connection', function (socket) {
         pseudo = socket.handshake.session.pseudo;
 
         socket.emit('serveur_emet_conversation', conversation);
+        socket.broadcast.emit('serveur_emet_conversation', conversation);
         socket.emit('serveur_emet_todo_list', todoListe);
     });
 
