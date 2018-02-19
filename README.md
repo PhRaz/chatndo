@@ -1,6 +1,7 @@
-# TODO List
+# Chat and TODO List
 
-Application simple de gestion de TODO list.
+
+Single page application, Application simple de gestion de TODO list.
 
 Cette application utilise NodeJS.
 
@@ -11,8 +12,8 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | b
 . ~/.nvm/nvm.sh
 nvm install 8.9.4
 yum install git -y
-git clone https://github.com/PhRaz/todolist.git
-cd todolist
+git clone https://github.com/PhRaz/chatndo.git
+cd chatndo
 npm install
 nohup node app.js
 </pre>
