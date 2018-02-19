@@ -25,7 +25,7 @@ ec2.getPublicIP(function (error, ip) {
 /*
  * initialize public IP address
  */
-// address = require("ip").address();
+//address = require("ip").address();
 
 var port = 80;
 
@@ -174,15 +174,21 @@ io.on('connection', function (socket) {
 
     socket.on('client_ajoute_todo', function (msg) {
         console.log('ajout todo ' + todoId + ' : ' + msg);
-        todoListe.push({todoId: todoId, todoItem: ent.encode(msg)});
+        todoListe.push({todoId: todoId, todoState: 'todo', todoItem: ent.encode(msg)});
         todoId++;
         socket.broadcast.emit('serveur_emet_todo_list', todoListe);
         socket.emit('serveur_emet_todo_list', todoListe);
     });
 
     socket.on('client_supprime_todo', function (msg) {
-        todoListe = todoListe.filter(function (e) {
-            return (e.todoId !== parseInt(msg));
+        todoListe = todoListe.forEach(function (e) {
+            if (e.todoId === parseInt(msg)) {
+                if (e.state === 'todo') {
+                    e.state = 'done';
+                } else {
+                    e.state = 'todo';
+                }
+            }
         });
         socket.broadcast.emit('serveur_emet_todo_list', todoListe);
         socket.emit('serveur_emet_todo_list', todoListe);
@@ -194,5 +200,5 @@ io.on('connection', function (socket) {
  * démarrage du serveur
  */
 server.listen(port, address, function () {
-    console.log('le serveur écoute sur *:' + port);
+    console.log('le serveur écoute sur ' + address + ':' + port);
 });

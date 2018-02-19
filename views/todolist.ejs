@@ -21,12 +21,20 @@
             padding: 2px 5px 2px 5px;
         }
 
-        .supprime_todo {
+        .supprime_todo .todo {
             color: red;
+        }
+
+        .supprime_todo .done {
+            color: black;
         }
 
         .supprime_todo:hover {
             cursor: default;
+        }
+
+        .done + .todo_item {
+            text-decoration: line-through;
         }
 
         .supprime_todo:hover + .todo_item {
@@ -137,7 +145,7 @@
     socket.on('serveur_emet_todo_list', function (todoList) {
         $('#todo_liste').html('');
         todoList.forEach(function (todoItem) {
-            var item = '<li><span class="supprime_todo" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
+            var item = '<li><span class="supprime_todo <%= todoItem.state %>" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
             $('#todo_liste').prepend(item);
         });
     });
@@ -145,9 +153,9 @@
     /*
      * receive conversation
      */
-    socket.on('serveur_emet_conversation', function(conversation) {
+    socket.on('serveur_emet_conversation', function (conversation) {
         $('#conversation').html('');
-        conversation.forEach(function(conversationItem) {
+        conversation.forEach(function (conversationItem) {
             $('#conversation').prepend('<p>' + conversationItem + '</p>');
         })
     });

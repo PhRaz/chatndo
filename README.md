@@ -7,6 +7,7 @@ Cette application utilise NodeJS.
 
 Installation du serveur sur une instance EC2 AWS :
 <pre>
+#!/bin/bash
 yum update -y
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 . ~/.nvm/nvm.sh
