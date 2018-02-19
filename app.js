@@ -13,6 +13,7 @@ var ec2 = require("ec2-publicip");
 /*
  * initialize public IP address for AWS EC2 instance
  */
+var address = '';
 ec2.getPublicIP(function (error, ip) {
     if (error) {
         console.log(error);
@@ -165,6 +166,12 @@ io.on('connection', function (socket) {
          * encodage des entitées HTML pour ne pas injecter de HTML dans la page
          */
         pseudo = socket.handshake.session.pseudo;
+        if (typeof pseudo !== "string") {
+            console.log('typeof pseudo : ' + typeof pseudo);
+        }
+        if (typeof msg.message !== "string") {
+            console.log('typeof msg.message : ' + typeof msg.message);
+        }
         message = '<span class="pseudo">' + ent.encode(pseudo) + '</span> ' + ent.encode(msg.message);
         console.log(pseudo + " : " + message);
         socket.broadcast.emit('message', message);
@@ -173,6 +180,9 @@ io.on('connection', function (socket) {
     });
 
     socket.on('client_ajoute_todo', function (msg) {
+        if (typeof msg !== "string") {
+            console.log('typeof msg : ' + typeof(msg));
+        }
         console.log('ajout todo ' + todoId + ' : ' + msg);
         todoListe.push({todoId: todoId, todoState: 'todo', todoItem: ent.encode(msg)});
         todoId++;
