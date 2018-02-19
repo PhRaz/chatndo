@@ -21,11 +21,11 @@
             padding: 2px 5px 2px 5px;
         }
 
-        .supprime_todo .todo {
+        .todo {
             color: red;
         }
 
-        .supprime_todo .done {
+        .done {
             color: black;
         }
 
@@ -145,7 +145,7 @@
     socket.on('serveur_emet_todo_list', function (todoList) {
         $('#todo_liste').html('');
         todoList.forEach(function (todoItem) {
-            var item = '<li><span class="supprime_todo <%= todoItem.state %>" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
+            var item = '<li><span class="supprime_todo ' + todoItem.todoState + '" id="' + todoItem.todoId + '">&#x2718; </span><span class="todo_item">' + todoItem.todoItem + '</span></li>';
             $('#todo_liste').prepend(item);
         });
     });

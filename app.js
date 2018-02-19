@@ -9,7 +9,6 @@ var ent = require('ent');
 var bodyParser = require('body-parser');
 var sharedsession = require("express-socket.io-session");
 var ec2 = require("ec2-publicip");
-var address = '';
 
 /*
  * initialize public IP address for AWS EC2 instance
@@ -21,13 +20,14 @@ ec2.getPublicIP(function (error, ip) {
     console.log("Instance Public IP: ", ip);
     address = ip;
 });
+//var address = require("ip").address();
+//var address = 'localhost';
 
 /*
- * initialize public IP address
+ * initialize port number
  */
-//address = require("ip").address();
-
 var port = 80;
+//var port = 8080;
 
 /*
  * Gestion de la liste dans une variable globale du serveur.
@@ -181,12 +181,12 @@ io.on('connection', function (socket) {
     });
 
     socket.on('client_supprime_todo', function (msg) {
-        todoListe = todoListe.forEach(function (e) {
+        todoListe.forEach(function (e) {
             if (e.todoId === parseInt(msg)) {
-                if (e.state === 'todo') {
-                    e.state = 'done';
+                if (e.todoState === 'todo') {
+                    e.todoState = 'done';
                 } else {
-                    e.state = 'todo';
+                    e.todoState = 'todo';
                 }
             }
         });
