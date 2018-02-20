@@ -41,7 +41,6 @@ var conversation = [];
 /*
  * configuration
  */
-
 var session = require('express-session')({
     secret: 'top secret',
     resave: true,
@@ -63,6 +62,22 @@ app.use(function (req, res, next) {
         req.session.pseudo = '';
     }
     next();
+});
+
+/*
+ * debug
+ */
+
+// Debugging express
+app.use("*", function(req, res, next) {
+  console.log("Express `req.session` data is %j.", req.session);
+  next();
+});
+
+// Debugging io
+io.use(function(socket, next) {
+  console.log("socket.handshake session data is %j.", socket.handshake.session);
+  next();
 });
 
 /*
