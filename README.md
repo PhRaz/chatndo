@@ -5,6 +5,8 @@ Single page application, Application simple de gestion de TODO list.
 
 Cette application utilise NodeJS.
 
+## Installation
+
 Installation du serveur sur une instance EC2 AWS :
 <pre>
 #!/bin/bash
@@ -16,5 +18,5 @@ yum install git -y
 git clone https://github.com/PhRaz/chatndo.git
 cd chatndo
 npm install
-nohup node app.js
+DEBUG=express:* nohup node app.js &
 </pre>
