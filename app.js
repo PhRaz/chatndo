@@ -49,12 +49,6 @@ var session = require('express-session')({
 
 app.use(session);
 
-io.use(sharedsession(session, {
-    autoSave: true
-}));
-
-app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(function (req, res, next) {
@@ -63,6 +57,10 @@ app.use(function (req, res, next) {
     }
     next();
 });
+
+io.use(sharedsession(session, {
+    autoSave: true
+}));
 
 /*
  * debug
@@ -147,7 +145,6 @@ app.get('/todo', function (req, res, next) {
     }
 });
 
-
 /*
  * redirection si url non trouvée
  */
@@ -177,16 +174,18 @@ io.on('connection', function (socket) {
     });
 
     socket.on('message', function (msg) {
-        /*
-         * encodage des entitées HTML pour ne pas injecter de HTML dans la page
-         */
-        pseudo = socket.handshake.session.pseudo;
+
         if (typeof pseudo !== "string") {
             console.log('typeof pseudo : ' + typeof pseudo);
         }
         if (typeof msg.message !== "string") {
             console.log('typeof msg.message : ' + typeof msg.message);
         }
+
+        pseudo = socket.handshake.session.pseudo;
+        /*
+         * encodage des entitées HTML pour ne pas injecter de HTML dans la page
+         */
         message = '<span class="pseudo">' + ent.encode(pseudo) + '</span> ' + ent.encode(msg.message);
         console.log(pseudo + " : " + message);
         socket.broadcast.emit('message', message);
