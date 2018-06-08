@@ -28,7 +28,7 @@ ec2.getPublicIP(function (error, ip) {
  * initialize port number
  */
 var port = 80;
-//var port = 8080;
+var port = 8080;
 
 /*
  * Gestion de la liste dans une variable globale du serveur.

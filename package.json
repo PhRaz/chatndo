@@ -13,9 +13,12 @@
     "ip": "^1.1.5",
     "socket.io": "~2.0.4"
   },
+  "scripts": {
+    "start": "node server.js"
+  },
   "repository": {
     "type": "git",
-    "url": "git://github.com/PhRaz/todolist.git"
+    "url": "git://github.com/PhRaz/chatndo.git"
   },
   "author": "PhRaz",
   "description": "Chat'n Do : une application sur une page avec un chat et une todo list"
