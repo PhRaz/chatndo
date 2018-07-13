@@ -20,3 +20,17 @@ cd chatndo
 npm install
 DEBUG=express:* nohup node app.js &
 </pre>
+
+## Utilisation de cognito
+
+### Adresse page de login
+
+<pre>
+https://listnchat.auth.eu-west-2.amazoncognito.com/login?response_type=token&client_id=dhshvf124nk15u9v7ge0vg29f&redirect_uri=http://localhost:8080/login
+</pre>
+
+### Adresse de logout
+
+<pre>
+https://listnchat.auth.eu-west-2.amazoncognito.com/logout?response_type=token&client_id=dhshvf124nk15u9v7ge0vg29f&logout_uri=https://listnchat.auth.eu-west-2.amazoncognito.com/login?response_type=token&client_id=dhshvf124nk15u9v7ge0vg29f&redirect_uri=http://localhost:8080/login
+</pre>

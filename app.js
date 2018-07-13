@@ -9,11 +9,15 @@ var ent = require('ent');
 var bodyParser = require('body-parser');
 var sharedsession = require("express-socket.io-session");
 var ec2 = require("ec2-publicip");
+var CognitoExpress = require("cognito-express");
+var cookieParser = require('cookie-parser');
+var util = require('util');
 
 /*
  * initialize public IP address for AWS EC2 instance
  */
 var address = '';
+/*
 ec2.getPublicIP(function (error, ip) {
     if (error) {
         console.log(error);
@@ -21,14 +25,28 @@ ec2.getPublicIP(function (error, ip) {
     console.log("Instance Public IP: ", ip);
     address = ip;
 });
+*/
 //var address = require("ip").address();
-//var address = 'localhost';
+var address = 'localhost';
 
 /*
  * initialize port number
  */
 var port = 80;
 var port = 8080;
+
+var serverUrl = "http://" + address + ":" + port;
+var loginUrl = serverUrl + "/login";
+
+/*
+ * cognito configuration
+ */
+var cognitoDomain = "listnchat";
+var cognitoRegion = "eu-west-2";
+var cognitoClientId = "dhshvf124nk15u9v7ge0vg29f";
+var cognitoUserPoolUrl = "https://" + cognitoDomain + ".auth." + cognitoRegion + ".amazoncognito.com";
+var cognitoLoginUrl = cognitoUserPoolUrl + "/login?response_type=token&client_id=" + cognitoClientId + "&redirect_uri=" + loginUrl;
+var cognitoLogoutUrl = cognitoUserPoolUrl + "/logout?response_type=token&client_id=" + cognitoClientId + "&logout_uri=" + cognitoLoginUrl;
 
 /*
  * Gestion de la liste dans une variable globale du serveur.
@@ -49,14 +67,18 @@ var session = require('express-session')({
 
 app.use(session);
 
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.use(function (req, res, next) {
-    if (!req.session.pseudo) {
-        req.session.pseudo = '';
-    }
-    next();
+/*
+ * Initializing CognitoExpress constructor
+ */
+var cognitoExpress = new CognitoExpress({
+    region: "eu-west-2",
+    cognitoUserPoolId: "eu-west-2_Fldcl9hUr",
+    tokenUse: "id", //Possible Values: access | id
+    tokenExpiration: 3600000 //Up to default expiration of 1 hour (3600000 ms)
 });
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 io.use(sharedsession(session, {
     autoSave: true
@@ -67,67 +89,75 @@ io.use(sharedsession(session, {
  */
 
 // Debugging express
-app.use("*", function(req, res, next) {
-  console.log("Express `req.session` data is %j.", req.session);
-  next();
+app.use("*", function (req, res, next) {
+    console.log("Express `req.session` data is %j.", req.session);
+    console.log('Cookies: ', req.cookies);
+    next();
 });
 
 // Debugging io
-io.use(function(socket, next) {
-  console.log("socket.handshake session data is %j.", socket.handshake.session);
-  next();
+io.use(function (socket, next) {
+    console.log("socket.handshake session data is %j.", socket.handshake.session);
+    next();
 });
 
-/*
- * login page request
- */
-app.get('/login', function (req, res, next) {
-    console.log("login");
-    if (req.session.pseudo !== '') {
-        /*
-         * already logged in
-         */
-        res.redirect('/todo');
-    } else {
-        res.render('./login.ejs');
+function checkCognitoToken(req, res, next)
+{
+    console.log("checkCognitoToken");
+
+    id_token = req.cookies.id_token;
+    if (!id_token) {
+        res.render("./login.ejs");
     }
-});
 
-/*
- * login page form submit
- */
-app.post('/login', function (req, res, next) {
-    console.log("post login");
-    if (req.body) {
-        if (req.body.pseudo) {
+    cognitoExpress.tokenUse = "id";
+    cognitoExpress.validate(id_token, function (err, response) {
+        if (err) {
             /*
-             * submit login
+             * remove cognito cookies
              */
-            req.session.pseudo = req.body.pseudo;
-
-            message = req.body.pseudo + ' a rejoint la conversation';
-            conversation.push(message);
-            console.log(message);
-
-            res.redirect('/todo');
-        } else {
-            /*
-             * incorrect login information
-             */
-            res.render('./login.ejs');
+            res.cookie("id_token", "", {expires: new Date(0), path: '/'});
+            res.cookie("access_token", "", {expires: new Date(0), path: '/'});
+            res.redirect(cognitoLoginUrl);
         }
-    }
+        console.log("response id token : " + util.inspect(response));
+        console.log("username : " + response['cognito:username']);
+        req.session.pseudo = response['cognito:username'];
+        res.redirect("/todo");
+    });
+}
+
+/*
+ * login page
+ *
+ * return a page to read the token in url hash and set them as cookie
+ * then reload the login page
+ * if tokens are checked as valid then continue to next page
+ * else return to signin/signup page
+ */
+app.get('/login', function(req, res, next) {
+    console.log("/login");
+    checkCognitoToken(req, res, next);
 });
 
 /*
  * logout request
  */
 app.get('/logout', function (req, res, next) {
+    console.log("/logout");
+    /*
+     * remove cognito cookies
+     */
+    res.cookie("id_token", "", {expires: new Date(0), path: '/'});
+    res.cookie("access_token", "", {expires: new Date(0), path: '/'});
+    /*
+     * and session
+     */
     req.session.destroy(function (err) {
         if (err) {
             console.log(err);
         } else {
-            res.redirect('/todo');
+            res.redirect(cognitoLogoutUrl);
         }
     });
 });
@@ -136,20 +166,21 @@ app.get('/logout', function (req, res, next) {
  * renvoie la page de l'application
  */
 app.get('/todo', function (req, res, next) {
-    console.log("todo");
-    if (req.session.pseudo !== '') {
-        console.log("page todo");
-        res.render('./todolist.ejs', {pseudo: req.session.pseudo, address: address, port: port});
-    } else {
-        res.redirect('/login');
-    }
+    console.log("/todo");
+    res.render('./todolist.ejs', {
+        pseudo: req.session.pseudo,
+        address: address,
+        port: port,
+        logout_url: "/logout"
+    });
 });
 
 /*
  * redirection si url non trouvée
  */
 app.use(function (req, res, next) {
-    res.redirect('/todo');
+    console.log("default");
+    checkCognitoToken(req, res, next);
 });
 
 /*
@@ -174,13 +205,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on('message', function (msg) {
-
-        if (typeof pseudo !== "string") {
-            console.log('typeof pseudo : ' + typeof pseudo);
-        }
-        if (typeof msg.message !== "string") {
-            console.log('typeof msg.message : ' + typeof msg.message);
-        }
 
         pseudo = socket.handshake.session.pseudo;
         /*

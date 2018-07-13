@@ -4,6 +4,8 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cognito-express": "^2.0.10",
+    "cookie-parser": "^1.4.3",
     "ec2-publicip": "^1.0.4",
     "ejs": "~2.5.7",
     "ent": "~2.2.0",
@@ -14,7 +16,7 @@
     "socket.io": "~2.0.4"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",

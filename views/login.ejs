@@ -12,31 +12,33 @@
 </head>
 
 <body>
+
 <div class="container">
-
-    <header class="page-header">
-        <h1>Chat'n do</h1>
-    </header>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <h2>Login</h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <form id="login" action="/login" method="post" class="form-inline">
-                <div class="form-group">
-                    <input type="text" size="40" name="pseudo" id="message" class="form-control"
-                           placeholder="Votre pseudo ..." autofocus/>
-                    <input type="submit" value="Login" class="btn btn-default"/>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    <h1>login page</h1>
+    <p>set cookie from url hash as cognito token.</p>
+    <p id="message"></p>
 </div>
+
+<script>
+    /*
+     * get cognito tokens from url hash and set them as cookies
+     */
+    if (window.location.hash) {
+        var hash = window.location.hash.substring(1);
+        var result = {};
+        hash.split("&").forEach(function (part) {
+            var item = part.split("=");
+            result[item[0]] = item[1];
+        });
+        document.cookie = "id_token=" + result['id_token'] + "; expires=" + result['expires'] + "; path=/";
+        document.cookie = "access_token=" + result['access_token'] + "; expires=" + result['expires'] + "; path=/";
+        window.location.href = "./todo";
+    } else {
+        $('#message').html("il manque les tokens dans l'URL");
+    }
+
+
+</script>
 
 </body>
 </html>
