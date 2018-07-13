@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a5d2ae37-a521-4f48-9266-cf17e7ca9d4f" name="Default" comment="dockerisation">
-      <change afterPath="$PROJECT_DIR$/.idea/chatndo.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="a5d2ae37-a521-4f48-9266-cf17e7ca9d4f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/login.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/login.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/todolist.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/todolist.ejs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -86,7 +76,11 @@
       </file>
       <file leaf-file-name="modules.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.idea/modules.xml">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
@@ -251,7 +245,7 @@
       <workItem from="1531221062391" duration="4468000" />
       <workItem from="1531233051032" duration="25858000" />
       <workItem from="1531395763816" duration="2656000" />
-      <workItem from="1531411152399" duration="9341000" />
+      <workItem from="1531411152399" duration="9741000" />
     </task>
     <task id="LOCAL-00001" summary="dockerisation">
       <created>1528466330547</created>
@@ -260,14 +254,22 @@
       <option name="project" value="LOCAL" />
       <updated>1528466330547</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="wip backup">
+      <created>1531467719484</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1531467719484</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80438000" />
+    <option name="totallyTimeSpent" value="80838000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="30" width="1922" height="1054" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4924812" visible="true" weight="0.16666667" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -347,7 +349,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="dockerisation" />
-    <option name="LAST_COMMIT_MESSAGE" value="dockerisation" />
+    <MESSAGE value="wip backup" />
+    <option name="LAST_COMMIT_MESSAGE" value="wip backup" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/package.json">
@@ -685,7 +688,11 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/.idea/modules.xml">
-      <provider selected="true" editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+        </state>
+      </provider>
     </entry>
   </component>
 </project>
