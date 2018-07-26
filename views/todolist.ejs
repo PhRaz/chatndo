@@ -48,19 +48,30 @@
 
     <header class="page-header">
         <div class="row">
-            <div class="col-lg-6">
-                <h1>Chat'n do</h1>
+            <div class="col-lg-10">
+                <h1>List'n Chat</h1>
             </div>
-            <div class="col-lg-5">
-                <h2>Hello <%= pseudo %> !</h2>
-            </div>
-            <div class="col-lg-1">
-                <h5><a href="/logout">logout</a></h5>
+            <div class="col-lg-2">
+                <h5><%= pseudo %> | <a href="<%= logout_url %>">logout</a></h5>
             </div>
         </div>
     </header>
 
     <div class="row">
+
+        <div class="col-lg-6 col-sm-12">
+
+            <h2>List</h2>
+
+            <form id="todo" action="" class="form-inline">
+                <div class="form-group">
+                    <input type="text" size="40" name="trucAFaire" id="truc_a_faire" class="form-control"/>
+                    <input type="submit" value="Ajouter" class="btn btn-default"/>
+                </div>
+            </form>
+            <ul id="todo_liste" class="list-unstyled">
+            </ul>
+        </div>
 
         <div class="col-lg-6 col-sm-12">
 
@@ -77,20 +88,6 @@
             </div>
         </div>
 
-        <div class="col-lg-6 col-sm-12">
-
-            <h2>Do</h2>
-
-            <form id="todo" action="" class="form-inline">
-                <div class="form-group">
-                    <input type="text" size="40" name="trucAFaire" id="truc_a_faire" class="form-control"/>
-                    <input type="submit" value="Ajouter" class="btn btn-default"/>
-                </div>
-            </form>
-            <ul id="todo_liste" class="list-unstyled">
-            </ul>
-        </div>
-
     </div>
 
 </div>
@@ -102,7 +99,7 @@
     var socket = io.connect('http://<%= address %>:<%= port %>');
     socket.emit('hello');
 
-    /*
+     /*
      * gestion du chat
      */
 
